@@ -14,7 +14,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
-
+/**
+ * File: mainView.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class mainView {
 
 	private JFrame frame;
@@ -79,13 +88,10 @@ public class mainView {
 					try {
 						obj.bePublisher();
 						
-					} catch (RemoteException e2) {
+					} catch (Exception e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
-					} catch (ServerNotActiveException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}	
+					} 	
 					PublisherView pub;
 					try {
 						pub = new PublisherView();

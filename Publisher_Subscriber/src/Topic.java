@@ -1,7 +1,16 @@
 import java.io.Serializable;
 import java.util.Vector;
 
-
+/**
+ * File: Topic.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class Topic implements Serializable {
 	int count = 0;
 	private String topic;
@@ -14,8 +23,10 @@ public class Topic implements Serializable {
 			if ( !publisher.contains( pub ) ) {
 				publisher.add( pub );
 			}
+		}else {
+			publisher.add( pub);
 		}
-		this.topic = t;
+		this.setTopic(t);
 	}
 	public void addSubscriber( String add ) {
 		if ( !subscriber.isEmpty() ) {	
@@ -47,5 +58,11 @@ public class Topic implements Serializable {
 	
 	public void addMsg( String m ) {
 		msgs.add( m );
+	}
+	public String getTopic() {
+		return topic;
+	}
+	public void setTopic(String topic) {
+		this.topic = topic;
 	}
 }

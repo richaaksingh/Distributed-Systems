@@ -16,14 +16,23 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * File: Publisher.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class Publisher extends UnicastRemoteObject
 implements PsInt, Serializable {
 
-	public static int BROKERPORT = 9973;
-	public static int PUBLISHERPORT = 7993;
+	public static int BROKERPORT = 9972;
+	public static int PUBLISHERPORT = 7990;
 	public static String BROKER = "glados";
-	//public static String BACKUPBROKER = "buddy";
+	public static String BACKUPBROKER = "buddy";
 	private String address;
 	public ConcurrentHashMap<String,Vector<String>> pendingMsg = new ConcurrentHashMap<String,Vector<String>>();
 	private static Publisher obj = null;
@@ -38,10 +47,11 @@ implements PsInt, Serializable {
 	public void setAddress(String address) throws java.rmi.RemoteException {
 		this.address = address;
 	}
-	private Publisher() throws RemoteException, ServerNotActiveException {
+	private Publisher() throws RemoteException {
 		super();
 		InetAddress ip;
 		try {
+			
 			/*obj = new Publisher();
 			Registry reg = LocateRegistry.createRegistry( PUBLISHERPORT );
 			reg.rebind( "Pub_Sub", obj );*/
@@ -53,18 +63,30 @@ implements PsInt, Serializable {
 
 		}
 
-		Registry BSreg = 
-				LocateRegistry.getRegistry( BROKER, BROKERPORT );
-		try {
+		try {	
+			Registry BSreg = LocateRegistry.getRegistry( BROKER, BROKERPORT );
+
 			bobj = ( BInt )BSreg.lookup( "Broker" );
 			Vector<String> stemp = bobj.getTopics( address );
 			System.out.println("stemp");
 			if ( stemp != null ) {
 				stopics = stemp;
 			}
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			
+			try {
+				Registry BSreg = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+				bobj = ( BInt )BSreg.lookup( "Backup" );
+				Vector<String> stemp = bobj.getTopics( address );
+				System.out.println("stemp");
+				if ( stemp != null ) {
+					stopics = stemp;
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 	}
 	public void acknowledge( int members, String msg ) throws RemoteException {
@@ -92,100 +114,159 @@ implements PsInt, Serializable {
 				Registry reg = LocateRegistry.createRegistry( PUBLISHERPORT );
 				reg.rebind( "Pub_Sub", obj );
 				System.out.println("publisher registered");
-			} catch (RemoteException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ServerNotActiveException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				//e.printStackTrace();
+			} 
 		}
 		return obj;
 	}
 
-	public void bePublisher() throws RemoteException, ServerNotActiveException {
-		Registry BSreg = 
-				LocateRegistry.getRegistry( BROKER, BROKERPORT );
+	public void bePublisher() {
 		try {
+			Registry BSreg = LocateRegistry.getRegistry( BROKER, BROKERPORT );
 			bobj = ( BInt )BSreg.lookup( "Broker" );
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			bobj.joinPub( address );
+		} catch (Exception e) {
+			
+			try {
+				Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+				BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+				bsobj.joinPub( address );
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
-		bobj.joinPub( address );
+		
 	}
-	
-	public void subscribe( String topic) throws RemoteException, ServerNotActiveException {
+	public void subscribe( String topic){
 		boolean subscribed = false;
 		stopics.add( topic );
 		while ( !subscribed ) {
-			Registry BSreg = 
+			try{Registry BSreg = 
 					LocateRegistry.getRegistry( BROKER, BROKERPORT );
-			try {
-				bobj = ( BInt )BSreg.lookup( "Broker" );
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			bobj = ( BInt )BSreg.lookup( "Broker" );
 			subscribed = bobj.subscribe( topic, obj.address );
+			} catch (Exception e) {
+				
+				try {
+					Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+					BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+					subscribed = bsobj.subscribe( topic, obj.address );
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+			
 		}
 	}
 
-	public void unsubscribe( String topic) throws RemoteException, ServerNotActiveException {
+	public void unsubscribe( String topic) {
 		boolean unsubscribed = false;
 		stopics.remove( topic );
 		while ( !unsubscribed ) {
-			Registry BSreg = 
-					LocateRegistry.getRegistry( BROKER, BROKERPORT );
-			try {
+			try {	
+				Registry BSreg = LocateRegistry.getRegistry( BROKER, BROKERPORT );
 				bobj = ( BInt )BSreg.lookup( "Broker" );
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				unsubscribed = bobj.unsubscribe( topic, obj.address );
+			} catch (Exception e) {
+				
+				try {
+					Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+					BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+					unsubscribed = bsobj.unsubscribe( topic, obj.address );
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
-			unsubscribed = bobj.unsubscribe( topic, obj.address );
+			
 		}
 	}
 
-	public Set<String> showTopic() throws ServerNotActiveException, ClassNotFoundException, IOException{
-		Registry BSreg = 
-				LocateRegistry.getRegistry( BROKER, BROKERPORT );
+	public Set<String> showTopic() {
 		try {
+			Registry BSreg = 
+					LocateRegistry.getRegistry( BROKER, BROKERPORT );
 			bobj = ( BInt )BSreg.lookup( "Broker" );
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return bobj.showTopics();
+		} catch (Exception e) {
+			
+			try {
+				Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+				System.out.println("entered");
+				BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+				return bsobj.showTopics();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
-		return bobj.showTopics();
+		return null;
 	}
 
 	public Vector<String> getTopics() {
-		return stopics;
+			return stopics;
 	}
-	public boolean addTopic( String topic ) throws ServerNotActiveException, ClassNotFoundException, IOException {
-		if ( !obj.ptopics.contains( topic ) ) {
-			obj.ptopics.add( topic );
-			Registry BSreg = 
+	public boolean addTopic( String topic ) {
+		if ( !ptopics.contains( topic ) ) {
+			ptopics.add( topic );
+			try {	Registry BSreg = 
 					LocateRegistry.getRegistry( BROKER, BROKERPORT );
-			try {
-				bobj = ( BInt )BSreg.lookup( "Broker" );
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			bobj = ( BInt )BSreg.lookup( "Broker" );
 			bobj.addTopic( topic, address );
+			} catch (Exception e) {
+				try {	Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+
+				BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+				bsobj.addTopic( topic, address );
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
 			return true;
 		}
 		return false;
 	}
-
-	public boolean publish( String topicName, String msg ) throws ServerNotActiveException, ClassNotFoundException, IOException {
-		if ( obj.ptopics.contains( topicName ) ) {
+	
+	public boolean publish( String topicName, String msg )  {
+		if (  ptopics.contains( topicName ) ) {
 			try {	Registry BSreg = LocateRegistry.getRegistry( BROKER, BROKERPORT );
 			bobj = ( BInt )BSreg.lookup( "Broker" );
 			bobj.publish( topicName, obj.address, msg );
+			return true;
 			} 
 			catch(Exception e ){
+				try {	Registry BSreg1 = LocateRegistry.getRegistry( BACKUPBROKER, BROKERPORT );
+				BsInt bsobj = ( BsInt )BSreg1.lookup( "BackUp" );
+				bsobj.publish( topicName, obj.address, msg );
+				return true;
+				} catch (Exception e1) {
+					/*if(pendingMsg.contains(obj.address)){
+						Vector<String> pm = pendingMsg.get(obj.address);
+						String val = topicName + ":" + msg;
+						pm.add(val);
+						pendingMsg.put(obj.address, pm);
+					}
+					else{
+						Vector<String> pm = new Vector<String>();
+						String val = topicName + ":" + msg;
+						pm.add(val);
+						pendingMsg.put(obj.address, pm);
+					}
+					Thread mp = new MonitorPublisher(obj);
+					mp.start();*/
+				}
+				
+
+				/*
 				if(pendingMsg.contains(obj.address)){
 					Vector<String> pm = pendingMsg.get(obj.address);
 					String val = topicName + ":" + msg;
@@ -202,14 +283,13 @@ implements PsInt, Serializable {
 				mp.start();
 
 
-			}
+				 */}
 
-			return true;
+			
 		}
 		return false;
 	}
+
+
+
 }
-
-
-
-

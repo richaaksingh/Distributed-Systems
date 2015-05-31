@@ -3,13 +3,21 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
 
+/**
+ * File: Susbcriber.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
+public class Subscriber implements Serializable {
 
-public class Subscriber extends UnicastRemoteObject
-implements Serializable{
-
-	public static int BROKERPORT = 9973;
+	public static int BROKERPORT = 9972;
 	public static String BROKER;
-	public static int SUBSCRIBERPORT = 7993;
+	public static int SUBSCRIBERPORT = 7990;
 	private String address;
 	private Vector<String> topics = new Vector<String>();
 	
@@ -25,9 +33,27 @@ implements Serializable{
 		this.topics.remove(t);
 	}
 	public Vector<String> getTpcs() {
-		System.out.println(topics.size());
 			return topics;
-		
 	}
-
+	public void addTopic( String topic ) {
+		if ( !topics.contains( topic ) ) {
+			topics.addElement( topic );
+		}
+	}
+	public void check( Vector<String> tpcs ) {
+		if ( this.topics.size() != tpcs.size() ) {
+			for ( int i = topics.size(); i < tpcs.size(); i++ ) {
+				topics.addElement( tpcs.get( i ) );
+			}
+		}
+	}
+	public String getAddress() {
+		return this.address;
+	}
+public int topicSize(){
+	if(topics == null){
+		return 0;
+	}
+	return topics.size();
+}
 }

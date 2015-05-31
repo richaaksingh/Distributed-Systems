@@ -21,6 +21,16 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 
 import javax.swing.Timer;
+/**
+ * File: PublisherView.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 
 public class PublisherView  implements ActionListener{
 
@@ -97,14 +107,13 @@ public class PublisherView  implements ActionListener{
 							JOptionPane.showMessageDialog(null," topic already exists");
 							textField.setText("");
 						}
-					} catch (HeadlessException | ClassNotFoundException
-							| IOException e1) {
+					} catch (Exception e1) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
 					}
-				} catch (ServerNotActiveException e1) {
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
 				}
 
 			}
@@ -144,22 +153,10 @@ public class PublisherView  implements ActionListener{
 					}
 					textField_1.setText("");
 					textField_3.setText("");
-				} catch (RemoteException e1) {
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				} catch (ServerNotActiveException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (HeadlessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				} 
 			}});
 		publishButton.setBounds(261, 150, 140, 29);
 		frame.getContentPane().add(publishButton);

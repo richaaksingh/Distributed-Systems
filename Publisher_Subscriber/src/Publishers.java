@@ -1,6 +1,15 @@
 import java.io.Serializable;
 import java.util.Vector;
-
+/**
+ * File: Publsihers.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 
 public class Publishers implements Serializable {
 	private String address;
@@ -27,5 +36,8 @@ public class Publishers implements Serializable {
 	
 	public int getMId() {
 		return mId;
+	}
+	public String getAddress() {
+		return this.address;
 	}
 }

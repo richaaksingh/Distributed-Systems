@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.Vector;
 
 /**
- * File: BInt.java
+ * File: BsInt.java
  * 
  * This class is a as backup server
  * and join CAN
@@ -14,8 +14,9 @@ import java.util.Vector;
  * @author Akshata Patil
  * @author  Sharvari Bharve
  */
-public interface BInt extends java.rmi.Remote {
-
+public interface BsInt extends java.rmi.Remote {
+	public void update( Update o ) throws java.rmi.RemoteException, ServerNotActiveException;
+	public Update getupdate() throws java.rmi.RemoteException, ServerNotActiveException;
 	public void addTopic( String topic, String add ) throws java.rmi.RemoteException, ServerNotActiveException, ClassNotFoundException, IOException;
 	public void publish( String topic, String address, String msg ) throws java.rmi.RemoteException, ServerNotActiveException, ClassNotFoundException, IOException;
 	public Vector<String> getTopics(  String add ) throws java.rmi.RemoteException;

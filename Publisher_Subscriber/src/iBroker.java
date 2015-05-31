@@ -5,7 +5,16 @@ import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-
+/**
+ * File: iBroker.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public interface iBroker extends Remote  {
 
 	void receiveTopic(String Topic, String ipaddress)throws RemoteException, UnknownHostException, NotBoundException;

@@ -1,4 +1,3 @@
-
 import java.awt.EventQueue;
 
 import javax.swing.ComboBoxEditor;
@@ -30,6 +29,16 @@ import javax.swing.JList;
 import javax.swing.JComboBox;
 import javax.swing.text.html.HTMLDocument.Iterator;
 
+/**
+ * File: Subscriber.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class Subscribeer extends JFrame{
 
 	private JFrame frame;
@@ -101,14 +110,14 @@ public class Subscribeer extends JFrame{
 		textArea_1.setBounds(21, 47, 1, 16);
 		frame.getContentPane().add(textArea_1);
 
-		Registry BSreg;
+		/*Registry BSreg;
 		try {
 			BSreg = LocateRegistry.getRegistry( BROKER, BROKERPORT );
 			bobj = ( BInt )BSreg.lookup( "Broker" );
 		} catch (RemoteException | NotBoundException e2) {
 			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+			//e2.printStackTrace();
+		}*/
 
 		Vector<String> topic = obj.getTopics();
 		if(topic!=null){
@@ -133,11 +142,11 @@ public class Subscribeer extends JFrame{
 				try {
 					try {
 						val = obj.showTopic();
-					} catch (ClassNotFoundException | IOException e1) {
+					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				} catch (ServerNotActiveException e3) {
+				} catch (Exception e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
 				}
@@ -167,15 +176,12 @@ public class Subscribeer extends JFrame{
 						textField_1.setText("");
 					}
 				}
-				catch (RemoteException e1) {
+				catch (Exception e1) {
 					e1.printStackTrace();
 				}
 				// TODO Auto-generated catch block
 
-				catch (ServerNotActiveException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+
 
 
 			}
@@ -236,15 +242,12 @@ public class Subscribeer extends JFrame{
 						textField.setText("");
 					}
 				}	
-				catch (RemoteException e1) {
+				catch (Exception e1) {
 
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				catch (ServerNotActiveException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+
 			}
 
 		});
@@ -280,11 +283,11 @@ public class Subscribeer extends JFrame{
 				try {
 					try {
 						topics = obj.showTopic();
-					} catch (ClassNotFoundException | IOException e1) {
+					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				} catch (ServerNotActiveException e1) {
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}

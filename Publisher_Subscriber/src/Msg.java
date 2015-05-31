@@ -3,10 +3,19 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Vector;
 
-
+/**
+ * File: Msg.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class Msg extends Thread
 		implements Serializable {
-	public static int PUBLISHERPORT = 7993;
+	public static int PUBLISHERPORT = 7990;
 	private String topic;
 	private String publisher;
 	private String msg;

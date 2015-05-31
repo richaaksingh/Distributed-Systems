@@ -3,11 +3,20 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+/**
+ * File: MulticastHandler.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 
 public class MulticastHandler implements Runnable, Serializable {
 
-	public static int PUBLISHERPORT = 7993;
+	public static int PUBLISHERPORT = 7990;
 	Msg msg;
 	String sub;
 	public MulticastHandler( Msg m, String add ) {

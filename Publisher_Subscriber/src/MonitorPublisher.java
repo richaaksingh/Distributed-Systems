@@ -7,7 +7,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-
+/**
+ * File: MonitorPublisher.java
+ * 
+ * This class is a as backup server
+ * and join CAN
+ * 
+ * @author Richa Singh
+ * @author Akshata Patil
+ * @author  Sharvari Bharve
+ */
 public class MonitorPublisher extends Thread {
 	private Publisher obj;
 	private Registry register;
@@ -32,7 +41,7 @@ public class MonitorPublisher extends Thread {
 					while(i.hasNext()){
 						String s = i.next();
 						String[] sc = s.split(":");
-						Registry BSreg = LocateRegistry.getRegistry( obj.BROKER, obj.BROKERPORT );
+						Registry BSreg = LocateRegistry.getRegistry( obj.BACKUPBROKER, obj.BROKERPORT );
 						bobj = ( BInt )BSreg.lookup( "Broker1" );
 						bobj.publish( sc[0], publisherEntry , sc[1] );
 						i.remove();
